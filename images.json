@@ -1,0 +1,9 @@
+{
+  "start": "images/start.png",
+  "help": "images/help.png",
+  "no_access": "images/denied.png",
+  "error": "images/error.png",
+
+  "cmd:say": "images/say.png",
+  "cmd": "images/cmd.png"
+}
