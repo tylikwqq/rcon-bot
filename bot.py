@@ -103,7 +103,11 @@ async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await reply(update,
-                "⚒ *RCON‑бот*\n/cmd `<команда>` – выполнить\nАдмин: /adduser /deluser /listusers",
+                "⚒ *RCON‑бот*\n"
+                "/cmd `<команда>` – выполнить\n"
+                "/online – список игроков онлайн\n"
+                "/tps – TPS сервера\n"
+                "Админ: /adduser /deluser /listusers",
                 key="help", parse_mode="Markdown")
 
 async def cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -124,6 +128,32 @@ async def cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         out_clean = strip_colors(out)
         text = f"✅ Вывод:\n`{out_clean}`" if out_clean.strip() else "✅ Команда выполнена, ответ пустой."
         await reply(update, text, key=f"cmd:{subkey}", parse_mode="Markdown")
+    except Exception as e:
+        await reply(update, f"❌ Ошибка: {e}", key="error")
+
+async def online_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    if not is_allowed(uid):
+        await reply(update, "⛔ У тебя нет доступа.", key="no_access")
+        return
+
+    try:
+        out = rcon_execute("list")
+        out_clean = strip_colors(out)
+        await reply(update, f"👥 Онлайн:\n`{out_clean}`", key="online", parse_mode="Markdown")
+    except Exception as e:
+        await reply(update, f"❌ Ошибка: {e}", key="error")
+
+async def tps_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    if not is_allowed(uid):
+        await reply(update, "⛔ У тебя нет доступа.", key="no_access")
+        return
+
+    try:
+        out = rcon_execute("tps")
+        out_clean = strip_colors(out)
+        await reply(update, f"⚡ TPS:\n`{out_clean}`", key="tps", parse_mode="Markdown")
     except Exception as e:
         await reply(update, f"❌ Ошибка: {e}", key="error")
 
@@ -173,12 +203,43 @@ def main():
 
     app = Application.builder().token(TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start_cmd))
-    app.add_handler(CommandHandler("help", help_cmd))
-    app.add_handler(CommandHandler("cmd", cmd, filters.ChatType.GROUPS | filters.ChatType.PRIVATE))
-    app.add_handler(CommandHandler("adduser", adduser))
-    app.add_handler(CommandHandler("deluser", deluser))
-    app.add_handler(CommandHandler("listusers", listusers))
+    bot_username = "rconmelunebot"
+
+    app.add_handler(CommandHandler(
+        ["start", f"start@{bot_username}"],
+        start_cmd
+    ))
+    app.add_handler(CommandHandler(
+        ["help", f"help@{bot_username}"],
+        help_cmd
+    ))
+    app.add_handler(CommandHandler(
+        ["cmd", f"cmd@{bot_username}"],
+        cmd,
+        filters.ChatType.GROUPS | filters.ChatType.PRIVATE
+    ))
+    app.add_handler(CommandHandler(
+        ["online", f"online@{bot_username}"],
+        online_cmd,
+        filters.ChatType.GROUPS | filters.ChatType.PRIVATE
+    ))
+    app.add_handler(CommandHandler(
+        ["tps", f"tps@{bot_username}"],
+        tps_cmd,
+        filters.ChatType.GROUPS | filters.ChatType.PRIVATE
+    ))
+    app.add_handler(CommandHandler(
+        ["adduser", f"adduser@{bot_username}"],
+        adduser
+    ))
+    app.add_handler(CommandHandler(
+        ["deluser", f"deluser@{bot_username}"],
+        deluser
+    ))
+    app.add_handler(CommandHandler(
+        ["listusers", f"listusers@{bot_username}"],
+        listusers
+    ))
 
     logger.info("Bot started 🟢")
     app.run_polling()
