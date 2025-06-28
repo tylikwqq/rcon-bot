@@ -203,43 +203,14 @@ def main():
 
     app = Application.builder().token(TOKEN).build()
 
-    bot_username = "rconmelunebot"
-
-    app.add_handler(CommandHandler(
-        ["start", f"start@{bot_username}"],
-        start_cmd
-    ))
-    app.add_handler(CommandHandler(
-        ["help", f"help@{bot_username}"],
-        help_cmd
-    ))
-    app.add_handler(CommandHandler(
-        ["cmd", f"cmd@{bot_username}"],
-        cmd,
-        filters.ChatType.GROUPS | filters.ChatType.PRIVATE
-    ))
-    app.add_handler(CommandHandler(
-        ["online", f"online@{bot_username}"],
-        online_cmd,
-        filters.ChatType.GROUPS | filters.ChatType.PRIVATE
-    ))
-    app.add_handler(CommandHandler(
-        ["tps", f"tps@{bot_username}"],
-        tps_cmd,
-        filters.ChatType.GROUPS | filters.ChatType.PRIVATE
-    ))
-    app.add_handler(CommandHandler(
-        ["adduser", f"adduser@{bot_username}"],
-        adduser
-    ))
-    app.add_handler(CommandHandler(
-        ["deluser", f"deluser@{bot_username}"],
-        deluser
-    ))
-    app.add_handler(CommandHandler(
-        ["listusers", f"listusers@{bot_username}"],
-        listusers
-    ))
+    app.add_handler(CommandHandler("start", start_cmd))
+    app.add_handler(CommandHandler("help", help_cmd))
+    app.add_handler(CommandHandler("cmd", cmd, filters.ChatType.GROUPS | filters.ChatType.PRIVATE))
+    app.add_handler(CommandHandler("online", online_cmd, filters.ChatType.GROUPS | filters.ChatType.PRIVATE))
+    app.add_handler(CommandHandler("tps", tps_cmd, filters.ChatType.GROUPS | filters.ChatType.PRIVATE))
+    app.add_handler(CommandHandler("adduser", adduser))
+    app.add_handler(CommandHandler("deluser", deluser))
+    app.add_handler(CommandHandler("listusers", listusers))
 
     logger.info("Bot started 🟢")
     app.run_polling()
