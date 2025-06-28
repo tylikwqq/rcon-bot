@@ -5,5 +5,7 @@
   "error": "images/error.png",
 
   "cmd:say": "images/say.png",
-  "cmd": "images/cmd.png"
+  "cmd": "images/cmd.png",
+  "online": "images/online.png",
+  "tps": "images/tps.png"
 }
